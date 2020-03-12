@@ -8,7 +8,9 @@ var app = express();
 
 app.use(helmet())
 app.use(morgan('dev'))
-app.use(express.json())
+app.use(express.json({
+  type: ['application/json', 'text/plain']
+}))
 
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
@@ -52,6 +54,8 @@ const metchTokenUser = (token, username) =>{
 
 //metdo che restituisce la lista delle immagini di un utente
 app.get('/users/:username/images', (req,res) =>{
+  console.log("richiesta lista immagini...")
+
   const username = req.params.username
   const token = req.headers['x-access-token']
 
@@ -73,6 +77,8 @@ app.get('/users/:username/images', (req,res) =>{
 
 //metodo per l'autenticazione di un utente mediante token
 app.get('/users', (req,res) =>{
+  console.log("autenticazione...")
+
   const token = req.headers['x-access-token']
   if(validateToken(token)){
     const username = getTokenUser(token)
@@ -90,6 +96,8 @@ app.get('/users', (req,res) =>{
 
 //metodo per aggiungere una nuova immagine alla collezione di un utente
 app.post('/users/:username/images', (req,res) =>{
+  console.log("aggiunta nuova immagine...")
+
   const username = req.params.username
   const token = req.headers['x-access-token']
   const imageLink = req.body.imageLink
@@ -109,6 +117,8 @@ app.post('/users/:username/images', (req,res) =>{
 
 //metodo per eliminare un'immagine dalla collezione di un utente
 app.delete('/users/:username/images/:image', (req,res) =>{
+  console.log("eliminazione immagine...")
+
   const username = req.params.username
   const token = req.headers['x-access-token']
   const imageLink = req.params.image
@@ -128,6 +138,8 @@ app.delete('/users/:username/images/:image', (req,res) =>{
 
 //metodo per ottenere il token di un utente
 app.post('/users/:username', async function (req, res) {
+  console.log("richiesta di token...")
+
     const password = req.body.password
     const username = req.params.username
     const user = db.get("users").find({username}).value()
@@ -149,9 +161,13 @@ app.post('/users/:username', async function (req, res) {
 
 //metodo per la registrazione di un nuovo utente
 app.post('/users', async function (req, res) {
+  console.log("registrazione nuovo utente...")
+
     const {username, password} = req.body
+    
     if(db.get("users").find({username:username}).size().value() > 0){
-        res.status(400).send({
+        res.send({
+            registered: false,
             error: "user already exists"
         })
         return
@@ -164,8 +180,7 @@ app.post('/users', async function (req, res) {
     }
     db.get('users').push(newUser).write()
     res.send({
-        username,
-        hashedPassword
+        registered : true
     })
   });
 
