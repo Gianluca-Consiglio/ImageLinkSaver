@@ -1,11 +1,12 @@
 require('dotenv').config()
+const {uuid} = require('uuidv4')
 const helmet = require('helmet');
 const morgan = require('morgan');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 var express = require('express');
 var app = express();
-
+uuid()
 app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json({
@@ -38,6 +39,7 @@ const validateToken = (token) =>{
 //funzione che restituisce il nome utete presente nel payload del jwt
 const getTokenUser = (token) => {
     var decoded = jwt.decode(token, {complete: true})
+    console.log(decoded.payload.username)
     return (decoded.payload.username)
   }
 
@@ -58,18 +60,15 @@ app.get('/users/:username/images', (req,res) =>{
 
   const username = req.params.username
   const token = req.headers['x-access-token']
-
   if(metchTokenUser(token, username)){
     const images = db.get("users").find({username}).get("images").value()
-    console.log(images)
     res.send({
-      response:"image saved!",
-      images: {images}
+      images: images
     })
   }
   else{
-    res.status(400).send({
-      error:'unauthorized'
+    res.send({
+      images:'unauthorized'
     })
   }
 
@@ -88,8 +87,8 @@ app.get('/users', (req,res) =>{
     })
   }
   else{
-    res.status(400).send({
-      error:'unauthorized'
+    res.send({
+      status:'unauthorized'
     })
   } 
 })
@@ -97,34 +96,33 @@ app.get('/users', (req,res) =>{
 //metodo per aggiungere una nuova immagine alla collezione di un utente
 app.post('/users/:username/images', (req,res) =>{
   console.log("aggiunta nuova immagine...")
-
+  let id = uuid()
   const username = req.params.username
   const token = req.headers['x-access-token']
   const imageLink = req.body.imageLink
-
   if(metchTokenUser(token, username)){
-    db.get("users").find({username}).get("images").push(imageLink).write()
+    db.get("users").find({username}).get("images").push({id: id, imageLink: imageLink}).write()
     res.send({
-      response:"image saved!"
+      response:"image saved!",
+      id:id
     })
   }
   else{
-    res.status(400).send({
-      error:'unauthorized'
+    res.send({
+      response:'unauthorized'
     })
   }
 })
 
 //metodo per eliminare un'immagine dalla collezione di un utente
-app.delete('/users/:username/images/:image', (req,res) =>{
+app.delete('/users/:username/images/:id', (req,res) =>{
   console.log("eliminazione immagine...")
 
   const username = req.params.username
   const token = req.headers['x-access-token']
-  const imageLink = req.params.image
-
+  const id = req.params.id
   if(metchTokenUser(token, username)){
-    db.get("users").find({username}).get("images").pull(imageLink).write()
+    db.get("users").find({username}).get("images").remove({id}).write()
     res.send({
       response:"image deleted!"
     })
@@ -143,6 +141,14 @@ app.post('/users/:username', async function (req, res) {
     const password = req.body.password
     const username = req.params.username
     const user = db.get("users").find({username}).value()
+    if(typeof(user) === 'undefined'){
+      console.log(false)
+      res.send({
+        authenticated : false
+      })
+      return
+    }
+    console.log("ops")
     const authenticated = await bcrypt.compare(password,user.hashedPassword)
     const token = jwt.sign({username},process.env.SECRET, {expiresIn:86400})
     if(authenticated){
@@ -152,8 +158,8 @@ app.post('/users/:username', async function (req, res) {
       })
     }
     else{
-      res.status(400).send({
-        error: "authentication faild"
+      res.send({
+        authenticated : false
       })
     }
   
