@@ -75,9 +75,11 @@ const useStyles = makeStyles(theme => ({
     if(!result)
       return false
 
-    result.then(r => r.token).then(r => localStorage.setItem("token",r))
-    localStorage.setItem("username",username)
+    result.then(r => r.token).then(r => {localStorage.setItem("token",r);
+    localStorage.setItem("username",username);
     setToken(true)
+    })
+    
     return true
   }
     

@@ -31,19 +31,20 @@ const useStyles = makeStyles(theme => ({
 const ImagesLink = (props) => {
 
     const classes = useStyles();
-    const [addImage,triggerAddNewImage] = useState(false)
+    const [refresh,setRefresh] = useState(false)
     var links = props.linkList
+    var index = -1
     return(
         <main>
             <Container className={classes.cardGrid} maxWidth="lg">
                 <Grid container spacing={4}>
                     {links.map(link => (
-                    <Grid item key={link} xs={12} sm={6} md={4} lg={3}>
-                        <ImageCard card={classes.card} cardMedia={classes.cardMedia} icon={classes.icon} link={link}/>
+                    <Grid item key={index++} xs={12} sm={6} md={4} lg={3}>
+                        <ImageCard card={classes.card} cardMedia={classes.cardMedia} icon={classes.icon} links={links} refresh = {refresh} setRefresh = {setRefresh} index = {index}/>
                     </Grid>
                     ))}
                 </Grid>
-                <AddButton links = {links} addImage = {addImage} triggerAddNewImage = {triggerAddNewImage}/>
+                <AddButton links = {links} refresh = {refresh} setRefresh = {setRefresh}/>
             </Container>
             
         </main>

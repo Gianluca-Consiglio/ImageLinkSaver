@@ -1,11 +1,13 @@
 import React from 'react';
 
 import GetAppIcon from '@material-ui/icons/GetApp';
-import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardMedia from '@material-ui/core/CardMedia';
+import DeleteButton from './deleteButton';
+
+
 
 function imageCard(props){
     
@@ -13,16 +15,15 @@ function imageCard(props){
         <Card className={props.card}>
             <CardMedia
                 className={props.cardMedia}
-                image={props.link}
+                image={props.links[props.index].imageLink}
                 title="Image title"
             />
             <CardActions>
-                <Button size="small" color="primary" variant="contained" size="small" startIcon={<GetAppIcon/>}>
-                    DOWNLOAD
-                </Button>
-                <Button size="small" color="primary" variant="contained" size="small" startIcon={<DeleteIcon/>}>
-                    DELETE
-                </Button>
+                
+                    <Button size="small" color="primary" variant="contained" size="small" startIcon={<GetAppIcon/>}  href={props.links[props.index].imageLink} download>
+                        DOWNLOAD
+                    </Button>
+                    <DeleteButton links={props.links} refresh = {props.refresh} setRefresh = {props.setRefresh} index = {props.index}/>
             </CardActions>
         </Card>
     )

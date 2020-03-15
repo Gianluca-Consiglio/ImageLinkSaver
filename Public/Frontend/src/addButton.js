@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme =>({
     }
   }));
 
-  function add(url, links, addImage, triggerAddNewImage){
+  function add(url, links, refresh, setRefresh){
       const username = localStorage.getItem("username")
       const token = localStorage.getItem("token")
       console.log(url + " " + username + " " + token)
@@ -32,8 +32,8 @@ const useStyles = makeStyles(theme =>({
 
     fetch(request).then(r => r.json()).then(r => {
       if(r.response === "image saved!")
-        links.push(url)
-        triggerAddNewImage(!addImage)
+        links.push({id:r.id, imageLink:url})
+        setRefresh(!refresh)
     })
 
   }
@@ -53,7 +53,7 @@ function AddButton(props){
       };
 
     const post = () => {
-        add(document.getElementById("URL").value, props.links, props.addImage ,props.triggerAddNewImage)
+        add(document.getElementById("URL").value, props.links, props.refresh ,props.setRefresh)
         setOpen(false)
     }
     return(

@@ -16,9 +16,6 @@ export default class ImageListClass extends Component{
     
 
     getImagesLinks= async()=>{
-        if(this.state.antiLoop) {
-          return
-        } 
         const username = localStorage.getItem("username")
         const token = localStorage.getItem("token")
         const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username + '/images',{
