@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router';
 import {useState} from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -36,25 +37,69 @@ const useStyles = makeStyles(theme => ({
 
 
 
-function sendSing(username, password){
-  
+function sendSing(setUsernameError, setPasswordError, setToken){
+  const username = document.getElementById("username").value
+  const password = document.getElementById("password").value
+  if(!fieldControl(setUsernameError,setPasswordError))
+    return false;
   const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username,{
       method: 'POST',
-      Headers: '{ "Content-Type" : "text/plain" }',
+      headers: { 'Content-Type' : 'application/json' },
       body: '{"password" : "' + password + '"}'
   })
+
+  let  result = fetch(request).then(r => r.json()).then(r => {
+      return r
+    })
   
-  if(username != "" && password != ""){
-    fetch(request).then(r => r.json()).then(r => console.log(r))
+  result.then(function (r) {
+    if(r.authenticated === true){
+      localStorage.setItem("token",r.token)
+      localStorage.setItem("username",username)
+      setToken(true)
+    }
+  })
+}
+
+function fieldControl(setPasswordError, setUsernameError){
+  const username = document.getElementById("username").value
+  const password = document.getElementById("password").value
+  let error = false;            
+  if(password == ""){
+    setPasswordError({error:true, helpText:"required field"})
+    error = true
   }
-    
+  else
+    setPasswordError({error:false, helpText:""})
+  if(username == ""){
+    setUsernameError({error:true, helpText:"required field"})
+    error = true
+  }
+  else
+    setUsernameError({error:false, helpText:""})
+  if(!validString(username) || !validString(password)){
+    error = true
+    if(!validString(username))
+      setUsernameError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
+    if(!validString(password))
+      setPasswordError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
+    }
+  
+    return !error
 }
 
 function SignIn() {
   const classes = useStyles();
   const [passwordError,setPasswordError] = useState({error:false, helpText:""})
   const [usernameError,setUsernameError] = useState({error:false, helpText:""})
-
+  const [token,setToken] = useState(false)
+  if(token === true){
+    return(
+      <Redirect push to={{
+        pathname: "/imageList",
+      }} />
+    )
+  }
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -94,25 +139,7 @@ function SignIn() {
             color="primary"
             className={classes.submit}
             onClick={()=>{
-              const username = document.getElementById("username").value
-              const password = document.getElementById("password").value
-              
-              if(password == "")
-                setPasswordError({error:true, helpText:"required field"})
-              else
-                setPasswordError({error:false, helpText:""})
-              if(username == "")
-                setUsernameError({error:true, helpText:"required field"})
-              else
-                setUsernameError({error:false, helpText:""})
-              if(!validString(username) || !validString(password)){
-                if(!validString(username))
-                  setUsernameError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-                if(!validString(password))
-                  setPasswordError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-              return
-              }
-              sendSing(username, password)
+              sendSing(setUsernameError,setPasswordError,setToken)
             }}
           >
             Sign In

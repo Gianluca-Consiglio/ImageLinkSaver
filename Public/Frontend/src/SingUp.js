@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Redirect } from 'react-router';
 import {useState} from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -39,20 +40,22 @@ const useStyles = makeStyles(theme => ({
 
 
 
- async function sendSing(username, password){
+ async function sendSing(setUsernameError,setPasswordError, setToken){
+  if(!fieldControl(setUsernameError,setPasswordError))
+    return false;
 
-  username.trim()
-  password.trim()
-  
+    const username = document.getElementById("username").value.trim()
+    const password = document.getElementById("password").value.trim()
+
   const RegisterRequest = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users',{
       method: 'POST',
-      Headers: '{ "Content-Type" : "text/plain" }',
+      headers: { 'Content-Type' : 'application/json' },
       body: '{"username" : "' + username + '", "password" : "' + password + '"}'
   })
 
   const TokenRequest = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username,{
       method: 'POST',
-      Headers: '{ "Content-Type" : "text/plain" }',
+      headers: { 'Content-Type' : 'application/json' },
       body: '{"password" : "' + password + '"}'
   })
   
@@ -72,16 +75,55 @@ const useStyles = makeStyles(theme => ({
     if(!result)
       return false
 
-    return result.then(function(r){return r.token})
+    result.then(r => r.token).then(r => localStorage.setItem("token",r))
+    localStorage.setItem("username",username)
+    setToken(true)
+    return true
   }
     
+}
+
+function fieldControl(setPasswordError, setUsernameError){
+  const username = document.getElementById("username").value
+  const password = document.getElementById("password").value
+  let error = false;            
+  if(password == ""){
+    setPasswordError({error:true, helpText:"required field"})
+    error = true
+  }
+  else
+    setPasswordError({error:false, helpText:""})
+  if(username == ""){
+    setUsernameError({error:true, helpText:"required field"})
+    error = true
+  }
+  else
+    setUsernameError({error:false, helpText:""})
+  if(!validString(username) || !validString(password)){
+    error = true
+    if(!validString(username))
+      setUsernameError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
+    if(!validString(password))
+      setPasswordError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
+    }
+  
+    return !error
 }
 
 function SignIn() {
   const classes = useStyles();
   const [passwordError,setPasswordError] = useState({error:false, helpText:""})
   const [usernameError,setUsernameError] = useState({error:false, helpText:""})
+  const [token,setToken] = useState(false)
 
+
+  if(token === true){
+    return(
+      <Redirect push to={{
+        pathname: "/imageList",
+      }} />
+    )
+  }
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -120,26 +162,8 @@ function SignIn() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={()=>{
-              const username = document.getElementById("username").value
-              const password = document.getElementById("password").value
-              if(password == "")
-                setPasswordError({error:true, helpText:"required field"})
-              else
-                setPasswordError({error:false, helpText:""})
-              if(username == "")
-                setUsernameError({error:true, helpText:"required field"})
-              else
-                setUsernameError({error:false, helpText:""})
-              if(!validString(username) || !validString(password)){
-                if(!validString(username))
-                  setUsernameError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-                if(!validString(password))
-                  setPasswordError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-              return
-              }
-              sendSing(username, password).then(function(r){console.log(r)})
-            }}
+            onClick={()=> sendSing(setUsernameError, setPasswordError, setToken) }
+            
           >
             Sign up
           </Button>

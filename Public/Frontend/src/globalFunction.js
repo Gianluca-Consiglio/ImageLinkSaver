@@ -21,3 +21,19 @@ export function invalidCharString(){
     s = s.substring(0,s.length-1)
     return s
 }
+
+export async function getImagesLinks(){
+    const username = localStorage.getItem("username")
+    const token = localStorage.getItem("token")
+    const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username + '/images',{
+      method: 'GET',
+      headers: {
+        'Content-Type' : 'application/json', 
+        'x-access-token' : token 
+        }
+    })
+    return await fetch(request).then(r => r.json()).then(r =>  {
+      console.log(r.images);
+      return r.images
+    }) 
+}
