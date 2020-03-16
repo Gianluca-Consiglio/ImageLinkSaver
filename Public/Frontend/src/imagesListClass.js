@@ -1,6 +1,11 @@
 
 import React, { Component} from 'react';
 import ImageList from './imagesList';
+import Header from './header'
+import {tokenLogin} from './globalFunction'
+import Typography from '@material-ui/core/Typography';
+
+
 
 export default class ImageListClass extends Component{
 
@@ -9,6 +14,7 @@ export default class ImageListClass extends Component{
         this.state = {
             links: [],
             loaded: false,
+            notAuthenticated: false,
         }
         
         
@@ -26,23 +32,48 @@ export default class ImageListClass extends Component{
             }
         })
         return await fetch(request).then(r => r.json()).then(r =>  {
-          console.log(r.images);
+          //console.log(r.images);
           return r.images
         }) 
     }
     
     componentDidMount(){
-      this.getImagesLinks().then(r =>
-        this.setState({links: r,loaded: true})
-      )
-  }
+      tokenLogin().then(r => {
+        if(r){
+          this.getImagesLinks().then(r =>
+            this.setState({links: r,loaded: true})
+          )
+        }
+        else{
+          this.setState({notAuthenticated: true,loaded: true})
+        }
+      })  
+    }
+
 
     render(){
-      if(!this.state.loaded)
-        return false
-      else
-        return (
-            <ImageList linkList={this.state.links} />
-        )
+          if(!this.state.loaded)
+            return false
+          else{
+            if(this.state.notAuthenticated === false)
+              return (
+                <div>
+                  <Header/>
+                  <ImageList linkList={this.state.links} />
+                </div>
+              )
+            else
+              return (
+                <div>
+                  <Typography  variant="h2" component="h2" gutterBottom>
+                    NOT AUTORIZED!
+                  </Typography>
+                  <Typography variant="h3" component="h2" gutterBottom>
+                    Please <a href="../singIn">sing in</a> or <a href="../singUp">create a new account</a>
+                  </Typography>
+                </div>
+              )
+          }
+      
     }
 }

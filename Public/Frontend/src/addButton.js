@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme =>({
   function add(url, links, refresh, setRefresh){
       const username = localStorage.getItem("username")
       const token = localStorage.getItem("token")
-      console.log(url + " " + username + " " + token)
+      //console.log(url + " " + username + " " + token)
     const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username + '/images',{
         method: 'POST',
         headers: { 'Content-Type' : 'application/json', 'x-access-token' : token},

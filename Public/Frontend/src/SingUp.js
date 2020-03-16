@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {validString,invalidCharString} from './globalFunction';
+import Header from './header';
 
 
 
@@ -59,7 +60,7 @@ const useStyles = makeStyles(theme => ({
       body: '{"password" : "' + password + '"}'
   })
   
-  if(username != "" && password != ""){
+  if(username !== "" && password !== ""){
     var result = fetch(RegisterRequest).then(function(response){return response.json()}).then(function(data){
       if (data.registered){
         return fetch(TokenRequest)
@@ -89,13 +90,13 @@ function fieldControl(setPasswordError, setUsernameError){
   const username = document.getElementById("username").value
   const password = document.getElementById("password").value
   let error = false;            
-  if(password == ""){
+  if(password === ""){
     setPasswordError({error:true, helpText:"required field"})
     error = true
   }
   else
     setPasswordError({error:false, helpText:""})
-  if(username == ""){
+  if(username === ""){
     setUsernameError({error:true, helpText:"required field"})
     error = true
   }
@@ -127,54 +128,58 @@ function SignIn() {
     )
   }
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <CreateIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign up
-        </Typography>
-          <TextField
-            error = {usernameError.error}
-            helperText = {usernameError.helpText}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            autoFocus
-          />
-          <TextField
-            error = {passwordError.error}
-            helperText = {passwordError.helpText}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
-            type="password"
-            id="password"
-          />
-          <Button
-            
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={()=> sendSing(setUsernameError, setPasswordError, setToken) }
-            
-          >
+    <div>
+      <Header/>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <CreateIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
             Sign up
-          </Button>
-          <Link to="singIn" >
-            "Already have an account? Sign In"
-          </Link>
-      </div>
-      
-    </Container>
+          </Typography>
+            <TextField
+              error = {usernameError.error}
+              helperText = {usernameError.helpText}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              autoFocus
+            />
+            <TextField
+              error = {passwordError.error}
+              helperText = {passwordError.helpText}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              label="Password"
+              type="password"
+              id="password"
+            />
+            <Button
+              
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={()=> sendSing(setUsernameError, setPasswordError, setToken) }
+              
+            >
+              Sign up
+            </Button>
+            <Link to="singIn" >
+              "Already have an account? Sign In"
+            </Link>
+        </div>
+        
+      </Container>
+    </div>
+    
   );
 }
 

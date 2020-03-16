@@ -1,37 +1,30 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { Redirect } from 'react-router';
-import {useState} from 'react';
+import Header from './header'
+import {tokenLogin} from './globalFunction'
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
 
-async function tokenLogin(){
-    let token = localStorage.getItem("token")
-    let logIn = false
 
-    if(token === null)
-        return logIn
-    
-    const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/',{
-        method: 'GET',
-        headers: {
-            'Content-Type' : 'application/json', 
-            'x-access-token' : token 
-        }
-    })
-    logIn = fetch(request).then(function(r) {return r.json()}).then(function(r){
-        console.log(r)
-        if(r.status == "authenticated!"){
-            localStorage.setItem("username",r.username)
-            return true
-        }
-            
-        else
-            return false
-        
-    })
-    return logIn.then(function(r) {return r})
-}
+const useStyles = makeStyles(theme => ({
+    root: {
+      display: "flex",
+      flexDirection: "column",
+      minHeight: "100vh"
+    },
+    main: {
+      marginTop: theme.spacing(8),
+      marginBottom: theme.spacing(2)
+    }
+  }));
 
 function Home(){
+    const classes = useStyles();
     const [redirect,setRedirect] = useState(false)
+    
+      
 
     tokenLogin().then(r => {
         setRedirect(r)
@@ -47,7 +40,18 @@ function Home(){
     
     return(
         <div>
-            <h1>Questa è l'home page di Images Link Saver!</h1>
+            <Header/>
+            <div className={classes.root}>
+      <CssBaseline />
+      <Container component="main" className={classes.main} maxWidth="sm">
+        <Typography variant="h2" component="h1" gutterBottom>
+            Image Link Saver
+        </Typography>
+        <Typography variant="h5" component="h2" gutterBottom>
+          {"Save and manage all your images without downloading them to your device!"}
+        </Typography>
+      </Container>
+        </div>
         </div>
     )
 }localStorage.getItem("token")

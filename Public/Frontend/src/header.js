@@ -37,6 +37,13 @@ function ButtonSingUp(){
   )
 }
 
+function ButtonLogOut(){
+  return(
+    <Button onClick={e => {localStorage.removeItem("token")
+    localStorage.removeItem("username")}} href="../" color="inherit">Log out</Button>
+  )
+}
+
 function separatore(){
   return(
     <Typography variant="h6">
@@ -62,6 +69,7 @@ export default function Header() {
               <Route exact path="/" component = {ButtonSingIn}/>
               <Route exact path="/" component = {separatore}/>
               <Route exact path="/" component = {ButtonSingUp}/>
+              <Route exact path="/imageList" component = {ButtonLogOut}/>
           </Router>
         </Toolbar>
       </AppBar>

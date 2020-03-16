@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -7,15 +6,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
-
-const useStyles = makeStyles(theme =>({
-    absolute: {
-      position: 'absolute',
-      placement:'bottom',
-      bottom: theme.spacing(2),
-      right: theme.spacing(3),
-    }
-  }));
 
   function deleteImage(links, index, refresh, setRefresh){
     const username = localStorage.getItem("username")
@@ -37,7 +27,6 @@ const useStyles = makeStyles(theme =>({
 
 
 function DeleteButton(props){
-    const classes = useStyles()
     const [open, setOpen] = React.useState(false)
     const handleClickOpen = () => {
         setOpen(true);
@@ -53,7 +42,7 @@ function DeleteButton(props){
     }
     return(
         <div>
-        <Button onClick={handleClickOpen} size="small" color="primary" variant="contained" size="small" startIcon={<DeleteIcon/>}>
+        <Button onClick={handleClickOpen} color="primary" variant="contained" size="small" startIcon={<DeleteIcon/>}>
                     DELETE
         </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">

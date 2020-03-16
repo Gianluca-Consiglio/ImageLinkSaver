@@ -10,7 +10,7 @@ import DeleteButton from './deleteButton';
 
 
 function imageCard(props){
-    
+    //const onMediaFallback = event => event.target.src = FALLBACK_IMAGE;
     return(
         <Card className={props.card}>
             <CardMedia
@@ -20,7 +20,7 @@ function imageCard(props){
             />
             <CardActions>
                 
-                    <Button size="small" color="primary" variant="contained" size="small" startIcon={<GetAppIcon/>}  href={props.links[props.index].imageLink} download>
+                    <Button color="primary" variant="contained" size="small" startIcon={<GetAppIcon/>}  href={props.links[props.index].imageLink} download>
                         DOWNLOAD
                     </Button>
                     <DeleteButton links={props.links} refresh = {props.refresh} setRefresh = {props.setRefresh} index = {props.index}/>
