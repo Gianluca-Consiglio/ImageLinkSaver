@@ -12,8 +12,8 @@ import CreateIcon from '@material-ui/icons/Create';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import {validString,invalidCharString} from './globalFunction';
 import Header from './header';
+import {fieldControl} from './globalFunction';
 
 
 
@@ -42,10 +42,12 @@ const useStyles = makeStyles(theme => ({
 
 
  async function sendSing(setUsernameError,setPasswordError, setToken){
-  if(!fieldControl(setUsernameError,setPasswordError))
+   //funzione per la registrazione di un nuovo utente
+
+  if(!fieldControl(setUsernameError,setPasswordError))//controllo falidità dei campi di inserimento
     return false;
 
-    const username = document.getElementById("username").value.trim()
+    const username = document.getElementById("username").value.trim()//trim toglie eventuali spazi bianchi ai lati
     const password = document.getElementById("password").value.trim()
 
   const RegisterRequest = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users',{
@@ -61,9 +63,10 @@ const useStyles = makeStyles(theme => ({
   })
   
   if(username !== "" && password !== ""){
+    //rischiesta di registrazione all'api
     var result = fetch(RegisterRequest).then(function(response){return response.json()}).then(function(data){
-      if (data.registered){
-        return fetch(TokenRequest)
+      if (data.registered){//true se la registrazione è avvenuta con successo
+        return fetch(TokenRequest)//viene fatta la richiesta del token all'api
       }
       else
         return false
@@ -76,8 +79,10 @@ const useStyles = makeStyles(theme => ({
     if(!result)
       return false
 
+    //token ed username vengono salvati nel local storage
     result.then(r => r.token).then(r => {localStorage.setItem("token",r);
     localStorage.setItem("username",username);
+    //lo stato viene settato per il reindirizzamento al componente ImagesListClass
     setToken(true)
     })
     
@@ -86,41 +91,18 @@ const useStyles = makeStyles(theme => ({
     
 }
 
-function fieldControl(setPasswordError, setUsernameError){
-  const username = document.getElementById("username").value
-  const password = document.getElementById("password").value
-  let error = false;            
-  if(password === ""){
-    setPasswordError({error:true, helpText:"required field"})
-    error = true
-  }
-  else
-    setPasswordError({error:false, helpText:""})
-  if(username === ""){
-    setUsernameError({error:true, helpText:"required field"})
-    error = true
-  }
-  else
-    setUsernameError({error:false, helpText:""})
-  if(!validString(username) || !validString(password)){
-    error = true
-    if(!validString(username))
-      setUsernameError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-    if(!validString(password))
-      setPasswordError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-    }
-  
-    return !error
-}
+
 
 function SignIn() {
+  //componente che gestisce la registrazione di un nuovo utente
   const classes = useStyles();
+  //stati per la gestione dei messaggi d'errore
   const [passwordError,setPasswordError] = useState({error:false, helpText:""})
   const [usernameError,setUsernameError] = useState({error:false, helpText:""})
   const [token,setToken] = useState(false)
 
 
-  if(token === true){
+  if(token === true){//se è presente un token valido viene reindirizzato al componente ImagesListClass
     return(
       <Redirect push to={{
         pathname: "/imageList",

@@ -7,17 +7,18 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-  function deleteImage(links, index, refresh, setRefresh){
+  function deleteImage(links, index, refresh, setRefresh){//funzione per l'eliminazione dell'immagine
     const username = localStorage.getItem("username")
     const token = localStorage.getItem("token")
     const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username + '/images/' + links[index].id,{
         method: 'DELETE',
         headers: { 'Content-Type' : 'application/json', 'x-access-token' : token},
     })
+    //viene fatta una richiesta di eliminazione della foto selezionata all'api
     fetch(request).then(r => r.json()).then(r =>{
-        if(r.response === "image deleted!"){
-            links.splice(index,1)
-            setRefresh(!refresh)
+        if(r.response === "image deleted!"){//true se l'immagine viene eliminata con successo
+            links.splice(index,1)//viene eliminata l'immagine dalla lista locale dei link
+            setRefresh(!refresh)//viene forzato il refresh del componente ImagesList
         }
     })
     
@@ -27,16 +28,18 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 
 function DeleteButton(props){
+  //componente che gestisce l'eliminazione della singola immagine
     const [open, setOpen] = React.useState(false)
-    const handleClickOpen = () => {
+
+    const handleClickOpen = () => {//funzione per l'apertura della finestra di dialogo
         setOpen(true);
       };
     
-      const handleClose = () => {
+      const handleClose = () => {//funzione per la chiusura della finestra di dialogo
         setOpen(false);
       };
 
-    const remove = () => {
+    const remove = () => {//funzione invocata alla conferma tramite finestra di dialogo
         deleteImage(props.links, props.index, props.refresh, props.setRefresh)
         setOpen(false)
     }

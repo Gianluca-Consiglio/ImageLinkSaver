@@ -10,7 +10,7 @@ import DeleteButton from './deleteButton';
 
 
 function imageCard(props){
-    //const onMediaFallback = event => event.target.src = FALLBACK_IMAGE;
+    //componente che gestisce la visualizzazione e la gestione della singola immagine
     return(
         <Card className={props.card}>
             <CardMedia

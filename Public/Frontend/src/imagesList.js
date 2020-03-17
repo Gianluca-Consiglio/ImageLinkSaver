@@ -29,11 +29,11 @@ const useStyles = makeStyles(theme => ({
 
 
 const ImagesLink = (props) => {
-
+//componente che si occupa della gestione e la visualizzazione delle immagini
     const classes = useStyles();
     const [refresh,setRefresh] = useState(false)
-    var links = props.linkList
-    var index = -1
+    var links = props.linkList //variabile assegnata all'array di link
+    var index = -1 //indice utilizzato per numerare le card visualizzate
     return(
         <main>
             <Container className={classes.cardGrid} maxWidth="lg">

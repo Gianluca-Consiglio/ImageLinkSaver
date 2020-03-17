@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme =>({
       right: theme.spacing(3),
     }
   }));
-
+  //funzione per l'aggiunta di una nuova immagine
   function add(url, links, refresh, setRefresh){
       const username = localStorage.getItem("username")
       const token = localStorage.getItem("token")
@@ -29,11 +29,11 @@ const useStyles = makeStyles(theme =>({
         headers: { 'Content-Type' : 'application/json', 'x-access-token' : token},
         body: '{"imageLink" : "' + url + '"}'
     })
-
+    //viene fatta la richiesta di aggiunta all'api
     fetch(request).then(r => r.json()).then(r => {
-      if(r.response === "image saved!")
-        links.push({id:r.id, imageLink:url})
-        setRefresh(!refresh)
+      if(r.response === "image saved!")//true se l'immagine viene salvata correttamente
+        links.push({id:r.id, imageLink:url})//viene aggiunta l'immagine all'array locale dei link
+        setRefresh(!refresh)//viene forzato il refresh del componente ImagesList
     })
 
   }
@@ -42,17 +42,18 @@ const useStyles = makeStyles(theme =>({
 
 
 function AddButton(props){
+  //componente che gestisce l'aggiunta di una nuova immagine
     const classes = useStyles()
     const [open, setOpen] = React.useState(false)
-    const handleClickOpen = () => {
+    const handleClickOpen = () => {//funzione per l'apertura della finestra di dialogo
         setOpen(true);
       };
     
-      const handleClose = () => {
+      const handleClose = () => {//funzione per la chiusura della finestra di dialogo
         setOpen(false);
       };
 
-    const post = () => {
+    const post = () => {//funzione invocata alla conferma di voler aggiungere l'immagine dalla finestra di dialogo
         add(document.getElementById("URL").value, props.links, props.refresh ,props.setRefresh)
         setOpen(false)
     }

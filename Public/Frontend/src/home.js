@@ -21,16 +21,19 @@ const useStyles = makeStyles(theme => ({
   }));
 
 function Home(){
+  //home è il componente che gestisce la prima pagina visualizzata una volta caricato il sito
     const classes = useStyles();
     const [redirect,setRedirect] = useState(false)
     
       
-
+    //viene controllato se è presente un token valido per accedere ad uno spazio personale
     tokenLogin().then(r => {
         setRedirect(r)
     })
     
+    //condizione valida se è presente un token valido
     if(redirect){
+      //redirect alla pagina per la visualizzazione delle immagini
         return(
             <Redirect push to={{
                 pathname: "/imageList",
@@ -54,6 +57,6 @@ function Home(){
         </div>
         </div>
     )
-}localStorage.getItem("token")
+}
 
 export default Home;

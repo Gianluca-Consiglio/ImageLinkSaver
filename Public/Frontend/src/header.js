@@ -54,6 +54,7 @@ function separatore(){
 
 
 export default function Header() {
+  //componente che gestisce l'app-bar
   const classes = useStyles();
 
   return (

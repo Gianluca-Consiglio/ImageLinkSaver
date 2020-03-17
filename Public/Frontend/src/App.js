@@ -7,7 +7,7 @@ import Home from './home';
 import ImageListClass from './imagesListClass';
 
 function App() {
-  
+  //App gestisce il routing delle pagine in base all'url corrente
   return(
     <div>
       <Router>

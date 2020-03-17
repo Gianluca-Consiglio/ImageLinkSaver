@@ -11,7 +11,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import {validString,invalidCharString} from './globalFunction';
+import {fieldControl} from './globalFunction';
 import Header from './header';
 
 
@@ -38,9 +38,10 @@ const useStyles = makeStyles(theme => ({
 
 
 function sendSing(setUsernameError, setPasswordError, setToken){
+  //funzione per la richiesta di logIn
   const username = document.getElementById("username").value
   const password = document.getElementById("password").value
-  if(!fieldControl(setUsernameError,setPasswordError))
+  if(!fieldControl(setUsernameError,setPasswordError))//controllo falidità dei campi di inserimento
     return false;
   const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username,{
       method: 'POST',
@@ -48,52 +49,31 @@ function sendSing(setUsernameError, setPasswordError, setToken){
       body: '{"password" : "' + password + '"}'
   })
 
+  //richiesta di logIn all'api
   let  result = fetch(request).then(r => r.json()).then(r => {
       return r
     })
   
   result.then(function (r) {
-    if(r.authenticated === true){
+    if(r.authenticated === true){//true se l'autenticazione è avvenuta con successo
+      //token ed username vengono salvati nel local storage
       localStorage.setItem("token",r.token)
       localStorage.setItem("username",username)
+      //lo stato viene settato per il reindirizzamento al componente ImagesListClass
       setToken(true)
     }
   })
 }
 
-function fieldControl(setPasswordError, setUsernameError){
-  const username = document.getElementById("username").value
-  const password = document.getElementById("password").value
-  let error = false;            
-  if(password === ""){
-    setPasswordError({error:true, helpText:"required field"})
-    error = true
-  }
-  else
-    setPasswordError({error:false, helpText:""})
-  if(username === ""){
-    setUsernameError({error:true, helpText:"required field"})
-    error = true
-  }
-  else
-    setUsernameError({error:false, helpText:""})
-  if(!validString(username) || !validString(password)){
-    error = true
-    if(!validString(username))
-      setUsernameError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-    if(!validString(password))
-      setPasswordError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
-    }
-  
-    return !error
-}
 
 function SignIn() {
+  //componente che gestisce il log in degli utenti registrati
   const classes = useStyles();
+  //stati per la gestione dei messaggi d'errore
   const [passwordError,setPasswordError] = useState({error:false, helpText:""})
   const [usernameError,setUsernameError] = useState({error:false, helpText:""})
   const [token,setToken] = useState(false)
-  if(token === true){
+  if(token === true){//se è presente un token valido viene reindirizzato al componente ImagesListClass
     return(
       <Redirect push to={{
         pathname: "/imageList",

@@ -1,4 +1,4 @@
-export function validString(string){
+export function validString(string){//funzione per la validazione di una stringa
     var list = invalidCharList()
     var result = true
     list.forEach(element =>{
@@ -8,11 +8,11 @@ export function validString(string){
     return result
   }
 
-export function invalidCharList(){
+export function invalidCharList(){ //funzione che restituisce un array con tutti i caratteri non ammessi
     return ["'",'"','{','}','(',')','[',']','=','+','&','%','|','/','^']
 }
 
-export function invalidCharString(){
+export function invalidCharString(){//funzione che restituisce una stringa con tutti i caratteri non ammessi
     var list = invalidCharList()
     var s = ""
     list.forEach(element => {
@@ -23,6 +23,7 @@ export function invalidCharString(){
 }
 
 export async function getImagesLinks(){
+    //funzione per la richiesta dei link delle immagini all'api
     const username = localStorage.getItem("username")
     const token = localStorage.getItem("token")
     const request = new Request('https://ImgSaver-backend--gianluca-consig.repl.co/users/' + username + '/images',{
@@ -33,7 +34,7 @@ export async function getImagesLinks(){
         }
     })
     return await fetch(request).then(r => r.json()).then(r =>  {
-      console.log(r.images);
+      //console.log(r.images);
       return r.images
     }) 
 }
@@ -65,3 +66,30 @@ export async function tokenLogin(){
   })
   return logIn.then(function(r) {return r})
 }
+
+export function fieldControl(setPasswordError, setUsernameError){
+    const username = document.getElementById("username").value
+    const password = document.getElementById("password").value
+    let error = false;            
+    if(password === ""){
+      setPasswordError({error:true, helpText:"required field"})
+      error = true
+    }
+    else
+      setPasswordError({error:false, helpText:""})
+    if(username === ""){
+      setUsernameError({error:true, helpText:"required field"})
+      error = true
+    }
+    else
+      setUsernameError({error:false, helpText:""})
+    if(!validString(username) || !validString(password)){
+      error = true
+      if(!validString(username))
+        setUsernameError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
+      if(!validString(password))
+        setPasswordError({error:true, helpText:"invalid characters( " + invalidCharString() + " )"})
+      }
+    
+      return !error
+  }
